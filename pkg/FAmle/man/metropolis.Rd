@@ -73,7 +73,8 @@ bayes.x.prior.2 <- metropolis(model=fit.x,iter=150,
 	trans.list=list(function(x) x,function(x) exp(x)),prior=prior.2)
 plot(bayes.x.prior.2)
 
-# Example where 'model' is not from the class 'mle'; i.e. both 'start' and 'variance' need to be specified!
+# Example where 'model' is not from the class 'mle'; i.e. 
+# both 'start' and 'variance' need to be specified!
 #x <- rweibull(5,2,1)
 x <- c(0.9303492,1.0894917,0.9628029,0.6145032,0.4756699)
 # Here 'fit.x <- mle(x,'weibull',c(.1,.1))' is not used,
@@ -81,7 +82,8 @@ model.x <- list(x=x,dist='weibull')
 # and an informative prior distribution is considered to ensure a proper posterior distribution
 prior.x <- function(x) dnorm(x[1],log(2),.1)*dnorm(x[2],log(1),.1)
 trans.list.x <- list(function(x) exp(x), function(x) exp(x))
-bayes.x <- metropolis(model=model.x,iter=150,prior=prior.x,trans.list=trans.list.x,pass.down.to.C=TRUE,start=c(0,0),variance=diag(.1,2,2))
+bayes.x <- metropolis(model=model.x,iter=150,prior=prior.x,trans.list=trans.list.x,
+            pass.down.to.C=TRUE,start=c(0,0),variance=diag(.1,2,2))
 
 }
 

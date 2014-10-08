@@ -9,7 +9,7 @@ function(model,ci=FALSE,alpha=.05)
 	zF <- distr(p,model=model,type='q')
 	plot(emp,sort(model$x.info[,'x']),pch=19,xlim=c(-log(-log(1/1000)),-log(-log(1-1/1000))),xlab='',ylab='',
 	ylim=c(distr(1/1000,model=model,type='q'),c(distr(1-1/1000,model=model,type='q'))),axes=FALSE,type='n')
-	axis(1,at=-log(-log(p.at)),cex.axis=.8,las=2,label=round(RP));axis(2,cex.axis=.8,las=2);box()
+	axis(1,at=-log(-log(p.at)),cex.axis=.8,las=2,labels=round(RP));axis(2,cex.axis=.8,las=2);box()
 	title(xlab='Return Period',ylab='Return Level')
 	fun.line <- function(x) distr(exp(-exp(-x)),model=model,type='q')
 	curve(fun.line,add=TRUE,col='red')

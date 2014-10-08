@@ -7,7 +7,7 @@ function(x)
 	lag.1 <- sapply(as.list(1:d),function(g) acf(sims[,g],plot=FALSE)$acf[2])
 	p <- c(.025,.5,.975)
 	Qp <- sapply(as.list(1:d),function(g) quantile(sims[,g],p))
-	layout(t(matrix(1:(2*d),nc=d)))
+	layout(t(matrix(1:(2*d),ncol=d)))
 	for(i in 1:d)
 	{
 		plot.ts(sims[,i],xlab='Iteration',ylab=names.[i],main='',

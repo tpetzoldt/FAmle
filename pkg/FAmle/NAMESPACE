@@ -3,3 +3,9 @@ useDynLib("FAmle")
 import(mvtnorm)
 
 exportPattern("^[[:alpha:]]+")
+
+S3method(hist, metropolis)
+S3method(hist, plot)
+S3method(plot, metropolis)
+S3method(plot, mle)
+S3method(print, metropolis)

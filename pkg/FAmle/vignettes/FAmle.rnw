@@ -8,7 +8,7 @@
 \usepackage{amssymb}
 \usepackage{longtable}
 \usepackage{natbib}
-\usepackage{url} 
+\usepackage{url}
 
 \setlength{\parindent}{0in}
 \setlength{\parskip}{.1in}
@@ -78,12 +78,14 @@ In other situations, it is convenient to evaluate a function for various paramet
 p <- .95
 mu <- c(0,1,2)
 s <- c(.1,.2,.3)
-cbind(R=qnorm(p=p,mean=mu,sd=s),FAmle=distr(x=p,dist='norm',param=cbind(mu,s),type='q'))
+cbind(R=qnorm(p=p,mean=mu,sd=s),FAmle=distr(x=p,dist='norm',
+  param=cbind(mu,s),type='q'))
 @
 From the previous example, it can be seen that the \texttt{param} argument may be specified (row-wise) as an array. In fact, it would also be possible to provide a probability vector, as long as the latter has length equal to the number of rows for the array of parameters:
 <<>>=
 p <- c(.1,.5,.9)
-cbind(R=qnorm(p=p,mean=mu,sd=s),FAmle=distr(x=p,dist='norm',param=cbind(mu,s),type='q'))
+cbind(R=qnorm(p=p,mean=mu,sd=s),FAmle=distr(x=p,dist='norm',
+  param=cbind(mu,s),type='q'))
 @
 In other words, if \texttt{param} is to be specified as an array, the user should then specify \texttt{x} as either a scalar (vector of length equal to 1) or a vector that has length equal to the number of rows in \texttt{param}.
 
@@ -160,7 +162,8 @@ As a second example, once more carried out using the elements available from the
 sorted.S.x <- 1 - fit.x[['x.info']][,'Fz']
 sorted.x <- fit.x[['x.info']][,'z']
 empirical.S.x <- 1 - fit.x[['x.info']][,'Emp']
-plot(sorted.x,sorted.S.x,type='l',col='red',xlab=expression(x),ylab=expression(S(x)==1-F(x)))
+plot(sorted.x,sorted.S.x,type='l',col='red',
+  xlab=expression(x),ylab=expression(S(x)==1-F(x)))
 points(sorted.x,empirical.S.x,pch=19,cex=.5)
 @
 In addition to the latter, Figure~\ref{fig:ex1-3} also shows an histogram of the \texttt{yarns} dataset, along with the fitted density curve for model \texttt{fit.x}. That second plot may be built as follows:
@@ -175,7 +178,8 @@ sorted.x <- fit.x[['x.info']][,'z']
 empirical.S.x <- 1 - fit.x[['x.info']][,'Emp']
 pdf('FAmle-ex1-3.pdf',width=8,height=4)
 layout(matrix(1:2,nr=1))
-plot(sorted.x,sorted.S.x,type='l',col='red',xlab=expression(x),ylab=expression(S(x)==1-F(x)))
+plot(sorted.x,sorted.S.x,type='l',col='red',
+  xlab=expression(x),ylab=expression(S(x)==1-F(x)))
 points(sorted.x,empirical.S.x,pch=19,cex=.25)
 hist(x,freq=FALSE,main='',col='cyan')
 fun.x <- function(x) distr(x=x,model=fit.x,type='d')
@@ -212,7 +216,8 @@ In this section, the \texttt{boot.mle} function will be briefly described and us
 data(station01AJ010)
 y <- station01AJ010
 layout(matrix(1:2,nr=1))
-plot(as.numeric(names(y)),y,type='b',cex=.4,pch=19,cex.axis=.75,xlab='Year',ylab='y')
+plot(as.numeric(names(y)),y,type='b',cex=.4,pch=19,
+  cex.axis=.75,xlab='Year',ylab='y')
 lines(as.numeric(names(y)),lowess(y)[['y']],col='red')
 legend('topleft',inset=.01,col='red',lwd=2,'Lowess',bty='n')
 acf(y,main='')
@@ -261,7 +266,9 @@ In addition to illustrating how bootstrap samples may be generated using \texttt
 <<ex2-3,eval=TRUE,fig=TRUE,echo=TRUE,include=FALSE,width=8,height=6>>=
 z1 <- seq(-4*se.asy[1],4*se.asy[1],length.out=100)+fit.y[['par.hat']][1]
 z2 <- seq(-4*se.asy[2],4*se.asy[2],length.out=100)+fit.y[['par.hat']][2]
-fz12 <- outer(z1,z2,function(h1,h2) dmvnorm(cbind(h1,h2),fit.y[['par.hat']],fit.y[['cov.hat']]))
+fz12 <- outer(z1,z2,
+  function(h1,h2) dmvnorm(cbind(h1,h2),fit.y[['par.hat']],fit.y[['cov.hat']])
+)
 contour(z1,z2,fz12)
 title(xlab=colnames(boot.y[['par.star']])[1])
 title(ylab=colnames(boot.y[['par.star']])[2])
@@ -317,14 +324,17 @@ Q.boot.ci(p=p,boot=boot.y,alpha=alpha)[['percentile']][c(1,3),]
 Q.boot.ci(p=p,boot=boot.y,alpha=alpha)[['reflexion']][c(1,3),]
 @
 Before commenting on those confidence intervals, it is informative to look at Figure~\ref{fig:ex2-4} for a visual assessment of the estimated quantiles' bootstrap distributions. The following code chunk illustrates how those distributions may be obtained and plotted. Also visible from that code is the \texttt{delta.Q} function, which is used to obtain the quantile estimates and their estimators' standard errors.
+
 <<ex2-4,fig=TRUE,include=FALSE,eval=TRUE,echo=TRUE>>=
-Q.boot.dist <- sapply(as.list(p),function(h) distr(h,dist=fit.y[['dist']],param=boot.y[['par.star']],type='q'))
+Q.boot.dist <- sapply(as.list(p),function(h) distr(h,dist=fit.y[['dist']],
+  param=boot.y[['par.star']],type='q'))
 Q.norm <- sapply(as.list(p),function(h) delta.Q(p=h,model=fit.y,ln=FALSE))
 layout(matrix(1:6,nc=2))
-for(i in 1:ncol(Q.boot.dist))
-{
-	hist(Q.boot.dist[,i],freq=F,col='gray',border='white',main=paste('T = ',RP,sep='')[i],xlab='',cex.axis=.75,las=2)
-	curve(distr(x=x,dist='norm',param=Q.norm[,i],type='d'),add=TRUE,col='red')
+for(i in 1:ncol(Q.boot.dist)) {
+  hist(Q.boot.dist[,i],freq=F,col='gray',border='white',
+    main=paste('T = ',RP,sep='')[i],xlab='',cex.axis=.75,las=2)
+  curve(distr(x=x,dist='norm',param=Q.norm[,i],type='d'),
+    add=TRUE,col='red')
 }
 @
 \begin{figure}
@@ -351,7 +361,8 @@ Since the \texttt{station01AJ010} dataset is consistent with the extreme value f
 <<>>=
 dGEV <- function(x,shape=1,scale=1,location=0,log=FALSE)
 {
-	fx <- 1/scale*(1+shape*((x-location)/scale))^(-1/shape-1)*exp(-(1+shape*((x-location)/scale))^(-1/shape))
+	fx <- 1/scale*(1+shape*((x-location)/scale))^(-1/shape-1)*
+	  exp(-(1+shape*((x-location)/scale))^(-1/shape))
 	if(log) return(log(fx))
 	else return(fx)
 }
@@ -444,9 +455,13 @@ It is very important that the argument \texttt{trans.list} be fully understood, 
 Once draws from the posterior distribution have been obtained, they can be used to compute the posterior distribution for any quantity that is a function of the estimated parameters. For instance, interest here might be in computing the posterior distributions for some specific quantiles, as illustrated by the code chunk below and displayed by Figure~\ref{fig:ex4-3}.
 <<ex4-3,fig=TRUE,eval=TRUE,echo=TRUE,include=FALSE,width=8,height=4>>=
 p <- c(.5,.9,.99)
-Q.p.post <- sapply(as.list(p),function(h) distr(x=h,dist=fit.z[['dist']],param=bayes.z[['sims']],type='q'))
+Q.p.post <- sapply(as.list(p),
+  function(h) distr(x=h,dist=fit.z[['dist']],
+    param=bayes.z[['sims']],type='q'))
 layout(matrix(1:length(p),nr=1))
-for(i in 1:ncol(Q.p.post)) hist(Q.p.post[,i],freq=FALSE,col='steelblue4',main=paste('T = ',1/(1-p[i]),sep=''),xlab='')
+for(i in 1:ncol(Q.p.post)) hist(Q.p.post[,i],
+  freq=FALSE,col='steelblue4',
+  main=paste('T = ',1/(1-p[i]),sep=''),xlab='')
 @
 \begin{figure}
 \centering
@@ -457,14 +472,18 @@ for(i in 1:ncol(Q.p.post)) hist(Q.p.post[,i],freq=FALSE,col='steelblue4',main=pa
 
 Depending on the situation at hand, it is sometimes deemed safer to consider a non-informative (or only weakly informative) prior distribution that is nonetheless proper. This will insure that the resulting posterior is also proper. Although this might not be necessary here, specification of the prior distribution will allow to illustrate how this is done with \texttt{metropolis}. Again, it should always be kept in mind that the prior distribution will be used on the transformed parameter space, such that it must be defined accordingly. Here's an example:
 <<echo=TRUE,eval=FALSE>>=
-prior.z.weak <- function(x) dnorm(x[1],0,1000)*dnorm(x[2],0,1000)*dnorm(x[3],0,1000)
-bayes.z.weak <- metropolis(model=fit.z,iter=10000,tun=2,trans.list=trans.z,prior=prior.z.weak)
+prior.z.weak <- function(x)
+  dnorm(x[1],0,1000)*dnorm(x[2],0,1000)*dnorm(x[3],0,1000)
+bayes.z.weak <- metropolis(model=fit.z,iter=10000,
+  tun=2,trans.list=trans.z,prior=prior.z.weak)
 @
 
 The following code chunk illustrates an equivalent way of specifying the previous prior distribution, which suggests that fairly complex prior distributions may be specified using \texttt{metropolis}.
 <<echo=TRUE,eval=FALSE>>=
-prior.z.weak.2 <- function(x) dmvnorm(x=x[1:3],mean=rep(0,3),sigma=diag(1000,3))
-bayes.z.weak.2 <- metropolis(model=fit.z,iter=10000,tun=2,trans.list=trans.z,prior=prior.z.weak.2)
+prior.z.weak.2 <- function(x) dmvnorm(x=x[1:3],
+  mean=rep(0,3),sigma=diag(1000,3))
+bayes.z.weak.2 <- metropolis(model=fit.z,iter=10000,
+  tun=2,trans.list=trans.z,prior=prior.z.weak.2)
 @
 
 To help further illustrate the point made at the previous paragraph, a final example is presented; an example which corresponds to an application in hydrology, for which the main goal is to enhance flood estimates for large return periods at hydrometric stations where very few historical data are available. In this last example, the goal will therefore be to make use of flood information available at the regional scale in order to elicit a prior distribution for the frequency distribution parameters at a particular site of interest.
@@ -478,11 +497,13 @@ floodsNB[[3]]
 @
 At large, \texttt{floodsNB} is a list whose elements correspond to individual hydrometric stations located across the Canadian province of New Brunswick (NB), and, in this case, the variable of interest is \texttt{peak} and corresponds to \textit{annual maximum daily peak discharge observations} (in $m^3/s$). As visible from the previous code chunk, the dataset contains flood data from \Sexpr{length(floodsNB)} stations located across NB. However, not all stations will be analyzed here -- the stations considered for analysis are identified in \texttt{Aucoin.2011} in the list; i.e.,
 <<>>=
-aucoin.2011 <- names(which(sapply(floodsNB,function(i) i[['Aucoin.2011']])))
+aucoin.2011 <- names(which(sapply(floodsNB,
+  function(i) i[['Aucoin.2011']])))
 aucoin.2011
 length(aucoin.2011)
 NB <- list()
-for(i in names(floodsNB)) if(is.element(i,aucoin.2011)) NB[[i]] <- floodsNB[[i]]
+for(i in names(floodsNB))
+  if(is.element(i,aucoin.2011)) NB[[i]] <- floodsNB[[i]]
 @
 Now, before going any further, it should be mentioned that three basic assumptions are made with regards to the annual observations available at the stations retained for analysis:
 \begin{itemize}
@@ -518,33 +539,31 @@ More precisely, the idea here is to exploit this relationship in order to elicit
 
 The following code chuck illustrates how the GEV parameters may be estimated by maximum likelihood for the remaining stations.
 <<>>=
-gev.inits <- function(x)
-{
-	sig.hat <- sqrt(var(x)*6/pi^2)
-	mu.hat <- mean(x) - digamma(1)*sig.hat
-	return(c(0.01,sig.hat,mu.hat))	
+gev.inits <- function(x) {
+  sig.hat <- sqrt(var(x)*6/pi^2)
+  mu.hat <- mean(x) - digamma(1)*sig.hat
+  return(c(0.01,sig.hat,mu.hat))
 }
 nb.stations <- nb.stations.fits <- list()
-for(i in names(NB))
-{
-	if(substr(i,3,3)=='A' & i != st)
-	{
-		temp <- NULL
-		try(temp <- mle(NB[[i]][['peak']],'gev',gev.inits(NB[[i]][['peak']])),silent=TRUE)
-		if(!is.null(temp))
-		{
-			nb.stations[[i]] <- NB[[i]]
-			nb.stations.fits[[i]] <- temp
-		}
-	}
-}		
+for(i in names(NB)) {
+  if(substr(i,3,3)=='A' & i != st) {
+    temp <- NULL
+    try(temp <- mle(NB[[i]][['peak']],'gev',gev.inits(NB[[i]][['peak']])),
+      silent=TRUE)
+    if(!is.null(temp)) {
+      nb.stations[[i]] <- NB[[i]]
+      nb.stations.fits[[i]] <- temp
+    }
+  }
+}
 f <- function(x) c(x[1],log(x[2:3]))
-nb.stations.par.hat <- t(sapply(nb.stations.fits,function(i) f(i[['par.hat']])))
+nb.stations.par.hat <- t(sapply(nb.stations.fits,
+  function(i) f(i[['par.hat']])))
 colnames(nb.stations.par.hat) <- c('shape','ln.scale','ln.location')
 nb.stations.par.hat[1:5,]
 nb.stations.ln.drain <- sapply(nb.stations,function(i) i[['ln.drain']])
 nb.stations.regs <- lapply(list('shape','ln.scale','ln.location'),
-	function(i) lm(nb.stations.par.hat[,i]~nb.stations.ln.drain))
+  function(i) lm(nb.stations.par.hat[,i]~nb.stations.ln.drain))
 names(nb.stations.regs) <- colnames(nb.stations.par.hat)
 @
 The previous output shows several commands, each of which are now explained in detail:
@@ -562,19 +581,25 @@ The previous output shows several commands, each of which are now explained in d
 par.old <- par(no.readonly=TRUE)
 par(oma=c(4,4,4,4),mar=c(0,4,0,2))
 layout(matrix(1:3,nr=3))
-plot(nb.stations.ln.drain,nb.stations.par.hat[,'shape'],type='n',axes=FALSE,xlab='',ylab='')
+plot(nb.stations.ln.drain,nb.stations.par.hat[,'shape'],
+  type='n',axes=FALSE,xlab='',ylab='')
 abline(nb.stations.regs[[1]],col='red')
 points(nb.stations.ln.drain,nb.stations.par.hat[,'shape'],pch=19,cex=.8)
 title(ylab='shape',cex.lab=1.2);box()
 axis(2,cex.axis=1,las=2)
-legend('topright',inset=.01,col='red',lty=c(1,0),lwd=c(1,0),c(paste('p-value = ',round(summary(nb.stations.regs[[1]])[['coefficients']][2,4],3),sep=''),paste('R-squared = ',round(summary(nb.stations.regs[[1]])[['r.squared']],3))),bty='n',cex=1.2)
+legend('topright',inset=.01,col='red',lty=c(1,0),lwd=c(1,0),
+  c(paste('p-value = ',round(summary(nb.stations.regs[[1]])[['coefficients']][2,4],3),
+  sep=''),paste('R-squared = ',round(summary(nb.stations.regs[[1]])[['r.squared']],3))),
+  bty='n',cex=1.2)
 
 plot(nb.stations.ln.drain,nb.stations.par.hat[,'ln.scale'],type='n',axes=FALSE,xlab='',ylab='')
 abline(nb.stations.regs[[2]],col='red')
 points(nb.stations.ln.drain,nb.stations.par.hat[,'ln.scale'],pch=19,cex=.8)
 title(ylab='ln(scale)',cex.lab=1.2);box()
 axis(4,cex.axis=1,las=2)
-legend('topleft',inset=.01,col='red',lty=c(1,0),lwd=c(1,0),c(paste('p-value = ',round(summary(nb.stations.regs[[2]])[['coefficients']][2,4],3),sep=''), paste('R-squared = ',round(summary(nb.stations.regs[[2]])[['r.squared']],3))),bty='n',cex=1.2)
+legend('topleft',inset=.01,col='red',lty=c(1,0),lwd=c(1,0),
+  c(paste('p-value = ',round(summary(nb.stations.regs[[2]])[['coefficients']][2,4],3),sep=''),
+   paste('R-squared = ',round(summary(nb.stations.regs[[2]])[['r.squared']],3))),bty='n',cex=1.2)
 
 
 plot(nb.stations.ln.drain,nb.stations.par.hat[,'ln.location'],type='n',axes=FALSE,xlab='',ylab='')
@@ -582,7 +607,9 @@ abline(nb.stations.regs[[3]],col='red')
 points(nb.stations.ln.drain,nb.stations.par.hat[,'ln.location'],pch=19,cex=.8)
 title(ylab='ln(location)',xlab='',cex.lab=1.2);box()
 axis(1,cex.axis=1,las=1);axis(2,cex.axis=1,las=2)
-legend('topleft',inset=.01,col='red',lty=c(1,0),lwd=c(1,0),c(paste('p-value = ',round(summary(nb.stations.regs[[3]])[['coefficients']][2,4],3),sep=''),paste('R-squared = ',round(summary(nb.stations.regs[[3]])[['r.squared']],3))),bty='n',cex=1.2)
+legend('topleft',inset=.01,col='red',lty=c(1,0),lwd=c(1,0),c(paste('p-value = ',
+  round(summary(nb.stations.regs[[3]])[['coefficients']][2,4],3),sep=''),
+  paste('R-squared = ',round(summary(nb.stations.regs[[3]])[['r.squared']],3))),bty='n',cex=1.2)
 title(xlab='ln(drainage)',outer=TRUE,line=2.5,cex.lab=1.3)
 par(par.old)
 @
@@ -596,23 +623,27 @@ par(par.old)
 
 Now, the final step is to make use of the relationships illustrated by Figure~\ref{fig:ex4-4} in order to elicit a prior distribution for the GEV parameters of station \Sexpr{st}. More precisely, the approach is to propose a multivariate normal prior distribution for the GEV parameters of station \Sexpr{st}, where the mean vector corresponds to the values obtained from the fitted regression models by conditioning on the actual station's drainage area, and by using the multivariate residuals of these three regression models to estimate a covariance matrix.
 <<>>=
-mu.x <- sapply(nb.stations.regs,function(i) as.numeric(coef(i)[1]+coef(i)[2]*ln.drain.x))
+mu.x <- sapply(nb.stations.regs,
+  function(i) as.numeric(coef(i)[1]+coef(i)[2]*ln.drain.x))
 mu.x
 residuals.x <- sapply(nb.stations.regs,residuals)
 sigma.x <- t(residuals.x)%*%residuals.x/nrow(residuals.x)
 sigma.x
 @
-The prior distribution whose parameters are presented in the previous code chunk suggests viewing the extra stations' GEV maximum likelihood parameter estimates as error-free realized values of some multivariate normal random variable. In other words, it is assumed that those estimates, when considered as a whole, will allow to approximate, with reasonable accuracy, the hierarchical structure that exists between the GEV parameters and the drainage area (as shown by Figure~\ref{fig:ex4-4}). In fact, all stations could be fitted simultaneously as part of a hierarchical model, but the conceptual difficulty with that approach is that the likelihood function would have to account for spatial dependence between the annual maxima observed at different stations. The assumption stated above, although it might appear unreasonable at first thought, is certainly more reasonable than attempting to model the spatial dependence between the annual maxima, especially when such dependence is of no particular interest. 
+The prior distribution whose parameters are presented in the previous code chunk suggests viewing the extra stations' GEV maximum likelihood parameter estimates as error-free realized values of some multivariate normal random variable. In other words, it is assumed that those estimates, when considered as a whole, will allow to approximate, with reasonable accuracy, the hierarchical structure that exists between the GEV parameters and the drainage area (as shown by Figure~\ref{fig:ex4-4}). In fact, all stations could be fitted simultaneously as part of a hierarchical model, but the conceptual difficulty with that approach is that the likelihood function would have to account for spatial dependence between the annual maxima observed at different stations. The assumption stated above, although it might appear unreasonable at first thought, is certainly more reasonable than attempting to model the spatial dependence between the annual maxima, especially when such dependence is of no particular interest.
 
 That said, the variables \texttt{mu.x} and \texttt{sigma.x} may be used to declare a prior distribution for the GEV parameters of station \Sexpr{st} i.e.
 <<>>=
-prior.x <- function(p) dmvnorm(x=c(p[1:2],log(p[3])),mean=mu.x,sigma=sigma.x)
+prior.x <- function(p)
+  dmvnorm(x=c(p[1:2],log(p[3])),mean=mu.x,sigma=sigma.x)
 @
 Finally, the model may now be estimated using \texttt{metropolis} - note the difference between the arguments specified in previous occurrences of \texttt{metropolis} and the one below.
 <<ex4-5,eval=TRUE,echo=TRUE,fig=TRUE,include=FALSE>>=
 inits.1 <- gev.inits(model.x[['x']])
 inits.1[2] <- log(inits.1[2])
-bayes.x.1 <- metropolis(model=model.x,iter=5000,trans.list=trans.list.x,start=inits.1,variance=diag(.1,3),prior=prior.x,pass.down.to.C=TRUE)
+bayes.x.1 <- metropolis(model=model.x,iter=5000,
+  trans.list=trans.list.x,start=inits.1,variance=diag(.1,3),
+  prior=prior.x,pass.down.to.C=TRUE)
 plot(bayes.x.1)
 @
 \begin{figure}
@@ -625,7 +656,9 @@ Inspection of the trace plots shown by Figure~\ref{fig:ex4-5} suggests that the 
 <<ex4-6,eval=TRUE,echo=TRUE,fig=TRUE,include=FALSE>>=
 start.x <- bayes.x.1[['M']]
 variance.x <- bayes.x.1[['V']]
-bayes.x.2 <- metropolis(model=model.x,iter=15000,trans.list=trans.list.x,start=start.x,variance=variance.x,prior=prior.x,pass.down.to.C=TRUE)
+bayes.x.2 <- metropolis(model=model.x,iter=15000,
+  trans.list=trans.list.x,start=start.x,variance=variance.x,
+  prior=prior.x,pass.down.to.C=TRUE)
 plot(bayes.x.2)
 @
 \begin{figure}
@@ -641,12 +674,14 @@ Figure~\ref{fig:ex4-6} suggests that the posterior distribution may be well appr
 prior.draws <- rmvnorm(100000,mu.x,sigma.x)
 prior.draws[,2:3] <- exp(prior.draws[,2:3])
 p <- c(.5,.9,.99)
-Q.p.post <- sapply(as.list(p),function(h) distr(x=h,dist='gev',param=bayes.x.2[['sims']],type='q'))
-Q.p.prior <- sapply(as.list(p),function(h) distr(x=h,dist='gev',param=prior.draws,type='q'))
+Q.p.post <- sapply(as.list(p),function(h)
+  distr(x=h,dist='gev',param=bayes.x.2[['sims']],type='q'))
+Q.p.prior <- sapply(as.list(p),function(h)
+  distr(x=h,dist='gev',param=prior.draws,type='q'))
 layout(matrix(1:length(p),nr=1))
-for(i in 1:ncol(Q.p.post))
-{
-	hist(Q.p.post[,i],freq=FALSE,col='steelblue4',main=paste('T = ',1/(1-p[i]),sep=''),xlab='')
+for(i in 1:ncol(Q.p.post)) {
+	hist(Q.p.post[,i],freq=FALSE,col='steelblue4',
+	  main=paste('T = ',1/(1-p[i]),sep=''),xlab='')
 	lines(density(Q.p.prior[,i],bw=3),col='red')
 }
 @

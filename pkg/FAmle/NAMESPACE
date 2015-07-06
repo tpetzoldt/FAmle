@@ -1,6 +1,9 @@
 useDynLib("FAmle")
 
-import(mvtnorm)
+import("graphics")
+import("stats")
+import("utils")
+import("mvtnorm")
 
 exportPattern("^[[:alpha:]]+")
 

@@ -9,6 +9,6 @@ This dataset is taken from the HYDAT database, and corresponds to realized value
 \format{A vector of observations.}
 \source{Hydrometric station 01AJ010}
 \references{
-Environment Canada: \url{http://www.ec.gc.ca/rhc-wsc/default.asp?lang=En&n=894E91BE-1}
+Environment Canada: \url{https://wateroffice.ec.gc.ca/}
 }
 \keyword{datasets}

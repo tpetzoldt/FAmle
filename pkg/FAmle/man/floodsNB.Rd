@@ -17,7 +17,6 @@
 \format{A \code{list} object whose elements correspond to distinct hydrometric stations.}
 \source{HYDAT database.}
 \references{
-Environment Canada: \url{http://www.ec.gc.ca/rhc-wsc/default.asp?lang=En&n=894E91BE-1}
-
+Environment and Climate Change Canada Historical Hydrometric Data web site, \url{https://wateroffice.ec.gc.ca/mainmenu/historical_data_index_e.html}
 }
 \keyword{datasets}

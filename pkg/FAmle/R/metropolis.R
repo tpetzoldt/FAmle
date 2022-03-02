@@ -48,13 +48,18 @@ function(model,iter=1000,tun=2,trans.list=NULL,start=NULL,variance=NULL,prior=NU
 		}
 		else 	start.trans <- sapply(as.list(1:k),function(h) uniroot(function(g)
 			trans.list[[h]](g)-model$par.hat[h],uniroot.interval)$root)
-	
+
 	}
 	if(is.null(start)) M <- fit$par
 	else M <- start
 	if(is.null(variance)) V <- solve(fit$hessian)*tun
 	else V <- variance*tun
-	ratio.test <- function(a,b) exp(sum(log.like(b)-log.like(a))+sum(log(prior(b))-log(prior(a))))
+
+	## thpe: suppressWarnings of log from negative values in dmvnorm
+	ratio.test <- function(a,b)
+	{
+	  suppressWarnings(exp(sum(log.like(b)-log.like(a))+sum(log(prior(b))-log(prior(a)))))
+	}
 	t1 <- Sys.time()
 	if(pass.down.to.C)
 	{
@@ -70,7 +75,7 @@ function(model,iter=1000,tun=2,trans.list=NULL,start=NULL,variance=NULL,prior=NU
 		for(i in 2:iter)
 		{
 			sims[i,] <- rmvnorm(1,sims[i-1,],V)
-			suppressWarnings(ratio <- ratio.test(sims[i-1,],sims[i,]))
+			ratio <- ratio.test(sims[i-1,],sims[i,])
 			if(!is.na(ratio) & runif(1) < ratio) rate[i] <- 1
 			else sims[i,] <- sims[i-1,]
 		}

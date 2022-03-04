@@ -4,9 +4,9 @@ metropolis <-
 function(model,iter=1000,tun=2,trans.list=NULL,start=NULL,variance=NULL,prior=NULL,burn=0,uniroot.interval=c(-100,100),
 	pass.down.to.C=FALSE)
 {
-	if(class(model)!='mle' & (is.null(start) || is.null(variance)))
+	if(!inherits(model, 'mle') & (is.null(start) || is.null(variance)))
 		stop('If argument \'model\' is not from class \'mle\', both \'start\' and \'variance\' must be specified!')
-	if(class(model)=='mle')
+	if(inherits(model, 'mle'))
 	{
 		x <- model$x.info[,'x']
 		k <- model$k
@@ -40,7 +40,7 @@ function(model,iter=1000,tun=2,trans.list=NULL,start=NULL,variance=NULL,prior=NU
 	fit <- model$fit
 	if(!is.null(trans.list))
 	{
-		if(class(model)=='mle')
+		if(inherits(model, 'mle'))
 		{
 			start.trans <- sapply(as.list(1:k),function(h) uniroot(function(g)
 				trans.list[[h]](g)-model$par.hat[h],uniroot.interval)$root)
